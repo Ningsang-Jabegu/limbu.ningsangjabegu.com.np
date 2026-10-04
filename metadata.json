@@ -1,0 +1,6 @@
+{
+  "name": "Yakthung Utils",
+  "description": "Research-oriented web interface and computational transliteration engine for Devanagari ↔ Sirijanga (Limbu) script conversion.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
