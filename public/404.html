@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 · Page Not Found — Yakthung Utils</title>
+    <meta name="description" content="The requested page could not be found on Yakthung Utils." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Limbu&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        background-color: #f8fafc;
+        color: #0f172a;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .font-sirijanga {
+        font-family: 'Noto Sans Limbu', sans-serif;
+      }
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        border-bottom: 1px solid #e2e8f0;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+      }
+      .header-inner {
+        max-width: 80rem;
+        width: 100%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #0f172a;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .brand span {
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+      main {
+        flex: 1;
+        max-width: 56rem;
+        width: 100%;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+      }
+      .kicker {
+        font-size: 0.75rem;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .kicker-badge {
+        color: #0f766e;
+        font-weight: 600;
+      }
+      h1 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        color: #0f172a;
+        margin-bottom: 0.75rem;
+      }
+      p.subtitle {
+        font-size: 1rem;
+        color: #475569;
+        margin-bottom: 1.5rem;
+        max-width: 42rem;
+      }
+      .diag-card {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        padding: 0.875rem 1rem;
+        font-size: 0.75rem;
+        max-width: 36rem;
+        margin-bottom: 2rem;
+      }
+      .diag-label {
+        font-size: 0.625rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+        margin-bottom: 0.25rem;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 3rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.15s, border-color 0.15s;
+        border: 1px solid transparent;
+      }
+      .btn-primary {
+        background: #0f172a;
+        color: #ffffff;
+      }
+      .btn-primary:hover {
+        background: #1e293b;
+      }
+      .btn-secondary {
+        background: #ffffff;
+        color: #0f172a;
+        border-color: #cbd5e1;
+      }
+      .btn-secondary:hover {
+        background: #f8fafc;
+      }
+      .dir-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e2e8f0;
+      }
+      .card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 0.15s, background-color 0.15s;
+      }
+      .card:hover {
+        border-color: #0f766e;
+        background: #f0fdfa;
+      }
+      .card-title {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+      }
+      .card-desc {
+        font-size: 0.6875rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+      }
+      .card-url {
+        font-size: 0.625rem;
+        color: #0f766e;
+      }
+      footer {
+        border-top: 1px solid #e2e8f0;
+        background: #ffffff;
+        padding: 1.5rem;
+        text-align: center;
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="/" class="brand">
+          <span>Yakthung Utils</span>
+          <span class="font-sirijanga font-mono">ᤕᤠᤰᤌᤢᤅ</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <div class="kicker">
+        <span class="kicker-badge font-mono">HTTP 404</span>
+        <span>·</span>
+        <span>Resource Not Located</span>
+        <span>·</span>
+        <span class="font-sirijanga">ᤐᤠ᤺ᤴ ᤔᤠ᤺ᤴ ᤋᤣ᤺ᤰ</span>
+      </div>
+
+      <h1>This Page Could Not Be Found</h1>
+      <p class="subtitle">
+        The requested URL path was not located within the Yakthung Utils directory or the Yakthung Language Technologies registry.
+      </p>
+
+      <div class="diag-card">
+        <div class="diag-label">Requested Coordinate</div>
+        <div class="font-mono" id="requested-path" style="color: #0f172a; font-weight: 500;">/</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="window.history.length > 1 ? window.history.back() : window.location.href='/'">
+          ← Go Back
+        </button>
+        <a href="/yakthung-utils/latest" class="btn btn-primary">
+          Open Yakthung Utils (Latest v0.0.1) →
+        </a>
+        <a href="/" class="btn btn-secondary">
+          Language Technologies Portal
+        </a>
+      </div>
+
+      <div class="dir-grid">
+        <a href="/yakthung-utils/latest" class="card">
+          <div class="card-title">Latest Converter</div>
+          <div class="card-desc">Direct access to the Devanagari ↔ Sirijanga conversion engine.</div>
+          <div class="card-url font-mono">/yakthung-utils/latest</div>
+        </a>
+
+        <a href="/yakthung-utils/research" class="card">
+          <div class="card-title">Research Documentation</div>
+          <div class="card-desc">Computational character mappings and linguistic methodology.</div>
+          <div class="card-url font-mono">/yakthung-utils/research</div>
+        </a>
+
+        <a href="/yakthung-utils/versions" class="card">
+          <div class="card-title">Version Matrix</div>
+          <div class="card-desc">Inspect frozen releases, test assertions, and git artifacts.</div>
+          <div class="card-url font-mono">/yakthung-utils/versions</div>
+        </a>
+      </div>
+    </main>
+
+    <footer>
+      © Yakthung Utils · Maintained by Ningsang Jabegu (ᤏᤡᤅᤚᤠ᤺ᤅ ᤈᤘᤣ᤺ᤃᤢ)
+    </footer>
+
+    <script>
+      // Display current requested path
+      var pathElem = document.getElementById('requested-path');
+      if (pathElem) {
+        pathElem.textContent = window.location.pathname + window.location.search;
+      }
+    </script>
+  </body>
+</html>

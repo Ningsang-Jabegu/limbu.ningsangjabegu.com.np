@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { LATEST_VERSION_ID, VERSIONS_REGISTRY } from '../versions/registry';
 
-export type AppView = 'portal' | 'converter' | 'research' | 'versions';
+export type AppView = 'portal' | 'converter' | 'research' | 'versions' | 'not-found';
 
 export interface RouteState {
   view: AppView;
@@ -12,7 +12,12 @@ export interface RouteState {
 
 export function parsePath(pathname: string): RouteState {
   // Normalize path removing trailing slashes (except root)
-  const clean = pathname.replace(/\/+$/, '') || '/';
+  let clean = pathname.replace(/\/+$/, '') || '/';
+
+  // Support query-string or hash path redirects if present
+  if (window.location.hash.startsWith('#/')) {
+    clean = window.location.hash.slice(1).replace(/\/+$/, '') || '/';
+  }
 
   // 1. Root / Portal home for limbu.ningsangjabegu.com.np
   if (clean === '' || clean === '/' || clean === '/portal') {
@@ -45,7 +50,7 @@ export function parsePath(pathname: string): RouteState {
   }
 
   // 4. /yakthung-utils/latest
-  if (clean === '/yakthung-utils/latest') {
+  if (clean === '/yakthung-utils/latest' || clean === '/latest') {
     return {
       view: 'converter',
       versionId: LATEST_VERSION_ID,
@@ -58,10 +63,18 @@ export function parsePath(pathname: string): RouteState {
   const versionMatch = clean.match(/^\/yakthung-utils\/(v[0-9]+\.[0-9]+\.[0-9]+)/i);
   if (versionMatch) {
     const requestedVersion = versionMatch[1].toLowerCase();
-    const resolvedVersion = VERSIONS_REGISTRY[requestedVersion] ? requestedVersion : LATEST_VERSION_ID;
+    if (VERSIONS_REGISTRY[requestedVersion]) {
+      return {
+        view: 'converter',
+        versionId: requestedVersion,
+        isLatestAlias: false,
+        rawPath: clean,
+      };
+    }
+    // Specific version not in registry
     return {
-      view: 'converter',
-      versionId: resolvedVersion,
+      view: 'not-found',
+      versionId: LATEST_VERSION_ID,
       isLatestAlias: false,
       rawPath: clean,
     };
@@ -77,9 +90,9 @@ export function parsePath(pathname: string): RouteState {
     };
   }
 
-  // Fallback to converter with latest version
+  // Any other unmatched route -> 404 Not Found
   return {
-    view: 'converter',
+    view: 'not-found',
     versionId: LATEST_VERSION_ID,
     isLatestAlias: false,
     rawPath: clean,
@@ -95,8 +108,10 @@ export function useAppRouter() {
     };
 
     window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
     return () => {
       window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
     };
   }, []);
 

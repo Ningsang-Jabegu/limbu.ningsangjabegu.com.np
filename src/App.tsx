@@ -12,6 +12,7 @@ import { ConverterUI } from './components/ConverterUI';
 import { ResearchSection } from './components/ResearchSection';
 import { VersionHistory } from './components/VersionHistory';
 import { YakthungPortalHome } from './components/YakthungPortalHome';
+import { NotFoundPage } from './components/NotFoundPage';
 
 export default function App() {
   const { route, navigate } = useAppRouter();
@@ -34,6 +35,9 @@ export default function App() {
     } else if (route.view === 'versions') {
       title = 'Version Matrix & Release History — Yakthung Utils';
       description = 'Immutable release register for yakthung-utils with test coverage statistics and git artifact provenance.';
+    } else if (route.view === 'not-found') {
+      title = '404 · Page Not Found — Yakthung Utils';
+      description = 'The requested resource or version was not located in the Yakthung Utils registry.';
     }
 
     document.title = title;
@@ -78,6 +82,13 @@ export default function App() {
         {route.view === 'versions' && (
           <VersionHistory
             currentVersionId={currentVersion.id}
+            onNavigate={navigate}
+          />
+        )}
+
+        {route.view === 'not-found' && (
+          <NotFoundPage
+            requestedPath={route.rawPath}
             onNavigate={navigate}
           />
         )}
