@@ -85,16 +85,6 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
     }
   };
 
-  // Convert digits
-  const handleConvertDigits = () => {
-    try {
-      const converted = adapter.convertToLimbuDigits(inputText);
-      setOutputText(converted);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   // Copy to clipboard with fallback
   const handleCopy = async () => {
     if (!outputText) return;
@@ -198,8 +188,9 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
           </div>
         </div>
         <p className="text-sm text-slate-600 max-w-3xl">
-          Deterministic Devanagari ↔ Sirijanga (Limbu) character and sequence mapping engine.
-          This interface executes the exact frozen <span className="font-mono font-medium text-slate-800">yakthung-utils@{version.versionNumber}</span> package
+          Deterministic Devanagari ↔ Sirijanga (Limbu) character, sequence, and numeral transliteration engine.
+          Automatically transliterates words, Nepali digits (०-९), and English digits (0-9) in any combined sequence
+          using the frozen <span className="font-mono font-medium text-slate-800">yakthung-utils@{version.versionNumber}</span> package
           (Git commit <span className="font-mono text-slate-800">{version.gitCommit}</span>).
         </p>
       </div>
@@ -300,15 +291,9 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
                   <Sparkles className="w-3.5 h-3.5 text-teal-400" />
                   <span>Convert</span>
                 </button>
-
-                <button
-                  type="button"
-                  onClick={handleConvertDigits}
-                  className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-md text-xs font-medium transition-colors cursor-pointer"
-                  title="Normalize numbers to native Sirijanga numerals"
-                >
-                  Convert Digits (᥆-᥏)
-                </button>
+                <span className="text-[11px] text-slate-500 hidden sm:inline">
+                  Nepali & English digits automatically transliterate
+                </span>
               </div>
 
               {inputText && (
@@ -413,7 +398,7 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
           <span className="text-xs text-slate-400">Click any sample to test live</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5">
           {GOLDEN_CASES.map((sample, idx) => (
             <button
               key={idx}
@@ -422,15 +407,17 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
                 setDirection('deva-to-limbu');
                 setInputText(sample.devanagari);
               }}
-              className="p-2.5 bg-white border border-slate-200 rounded-lg hover:border-teal-500 hover:bg-teal-50/30 transition-colors text-left flex flex-col justify-between cursor-pointer group"
+              className="p-3 bg-white border border-slate-200 rounded-lg hover:border-teal-500 hover:bg-teal-50/30 transition-colors text-left flex flex-col justify-between cursor-pointer group shadow-2xs"
             >
-              <div className="font-devanagari text-sm font-medium text-slate-900 group-hover:text-teal-900">
-                {sample.devanagari}
+              <div>
+                <div className="font-devanagari text-sm font-medium text-slate-900 group-hover:text-teal-900">
+                  {sample.devanagari}
+                </div>
+                <div className="font-sirijanga text-base text-teal-700 mt-1">
+                  {sample.limbu}
+                </div>
               </div>
-              <div className="font-sirijanga text-base text-teal-700 mt-1">
-                {sample.limbu}
-              </div>
-              <div className="text-[10px] text-slate-400 mt-1 truncate">
+              <div className="text-[10px] text-slate-400 mt-2 truncate pt-1 border-t border-slate-100">
                 {sample.notes}
               </div>
             </button>

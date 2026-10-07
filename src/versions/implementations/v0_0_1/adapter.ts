@@ -40,12 +40,40 @@ export interface ConverterFunctions {
   };
 }
 
+const LIMBU_TO_DEVANAGARI_DIGITS: Record<string, string> = {
+  '᥆': '०',
+  '᥇': '१',
+  '᥈': '२',
+  '᥉': '३',
+  '᥊': '४',
+  '᥋': '५',
+  '᥌': '६',
+  '᥍': '७',
+  '᥎': '८',
+  '᥏': '९',
+};
+
+export function convertLimbuDigitsToDevanagari(input: string): string {
+  return String(input)
+    .split('')
+    .map((char) => LIMBU_TO_DEVANAGARI_DIGITS[char] || char)
+    .join('');
+}
+
 export const v0_0_1_adapter: ConverterFunctions = {
   devanagariToLimbu: (text: string): string => {
-    return pkgDevanagariToLimbu(text);
+    if (!text) return '';
+    // 1. Transliterate Devanagari characters to Sirijanga
+    const scriptConverted = pkgDevanagariToLimbu(text);
+    // 2. Automatically transliterate all Nepali (०-९) and English (0-9) digits to Sirijanga (᥆-᥏)
+    return pkgConvertToLimbuDigits(scriptConverted);
   },
   limbuToDevanagari: (text: string): string => {
-    return pkgLimbuToDevanagari(text);
+    if (!text) return '';
+    // 1. Transliterate Sirijanga characters to Devanagari
+    const scriptConverted = pkgLimbuToDevanagari(text);
+    // 2. Automatically transliterate Sirijanga digits (᥆-᥏) back to Devanagari digits (०-९)
+    return convertLimbuDigitsToDevanagari(scriptConverted);
   },
   convertToLimbuDigits: (input: string | number): string => {
     return pkgConvertToLimbuDigits(input);

@@ -37,10 +37,14 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
             actual = v0_0_1_adapter.devanagariToLimbu(tc.input);
           } else if (tc.direction === 'limbuToDevanagari') {
             actual = v0_0_1_adapter.limbuToDevanagari(tc.input);
+          } else if (tc.direction === 'roundtrip') {
+            actual = v0_0_1_adapter.limbuToDevanagari(v0_0_1_adapter.devanagariToLimbu(tc.input));
           } else if (tc.direction === 'digits') {
             actual = v0_0_1_adapter.convertToLimbuDigits(tc.input);
           } else if (tc.direction === 'scriptDetection') {
             actual = String(v0_0_1_adapter.isLimbuScript(tc.input));
+          } else if (tc.direction === 'unicodeHex') {
+            actual = 'U+' + (tc.input.codePointAt(0)?.toString(16).toUpperCase().padStart(4, '0') ?? '');
           }
 
           if (actual === tc.expected) {

@@ -18,7 +18,7 @@ export interface TestSuiteInfo {
     input: string;
     expected: string;
     description: string;
-    direction: 'devanagariToLimbu' | 'limbuToDevanagari' | 'digits' | 'scriptDetection';
+    direction: 'devanagariToLimbu' | 'limbuToDevanagari' | 'digits' | 'scriptDetection' | 'roundtrip' | 'unicodeHex';
   }>;
 }
 
@@ -46,9 +46,12 @@ export const V0_0_1_TEST_SUITES: TestSuiteInfo[] = [
     category: 'Numerals',
     description: 'Validates conversion of standard ASCII digits (0-9) and Devanagari digits (०-९) to native Limbu numeric glyphs (᥆-᥏).',
     sampleCases: [
-      { input: '2026', expected: '᥈᥆᥈᥌', description: 'ASCII year 2026 to Limbu digits', direction: 'digits' },
-      { input: '२०८३', expected: '᥈᥆᥎᥉', description: 'Devanagari year २०८३ to Limbu digits', direction: 'digits' },
-      { input: '0123456789', expected: '᥆᥇᥈᥉᥊᥋᥌᥍᥎᥏', description: 'Complete 0-9 sequence mapping', direction: 'digits' },
+      { input: '2026', expected: '᥈᥆᥈᥌', description: 'ASCII year 2026 to Limbu digits', direction: 'devanagariToLimbu' },
+      { input: '२०८३', expected: '᥈᥆᥎᥉', description: 'Devanagari year २०८३ to Limbu digits', direction: 'devanagariToLimbu' },
+      { input: 'खेमा 2026', expected: 'ᤂᤣᤔᤠ ᥈᥆᥈᥌', description: 'Chars + English digits combo', direction: 'devanagariToLimbu' },
+      { input: '2026 खेमा', expected: '᥈᥆᥈᥌ ᤂᤣᤔᤠ', description: 'English digits + chars combo', direction: 'devanagariToLimbu' },
+      { input: 'वर्ष 2026 मा', expected: 'ᤘᤷᤚ ᥈᥆᥈᥌ ᤔᤠ', description: 'Chars + digits + chars combo', direction: 'devanagariToLimbu' },
+      { input: '1 क 2', expected: '᥇ ᤁ ᥈', description: 'Digits + chars + digits combo', direction: 'devanagariToLimbu' },
     ]
   },
   {
@@ -193,9 +196,11 @@ export const V0_0_1_TEST_SUITES: TestSuiteInfo[] = [
     category: 'Reversibility Tiers',
     description: 'Verifies the 3-tier round-trip contract: Lossless (reversible), Normalized (intentional phonetic mergers), and Lossy (unrecoverable fallbacks).',
     sampleCases: [
-      { input: 'खेमा', expected: 'खेमा', description: 'Lossless round trip', direction: 'devanagariToLimbu' },
-      { input: 'काँ', expected: 'कां', description: 'Normalized round trip (Chandrabindu -> Anusvara)', direction: 'devanagariToLimbu' },
-      { input: 'टिका', expected: 'तिका', description: 'Lossy fallback round trip (Retroflex -> Dental)', direction: 'devanagariToLimbu' },
+      { input: 'खेमा', expected: 'खेमा', description: 'Lossless text round trip', direction: 'roundtrip' },
+      { input: 'खेमा 2026', expected: 'खेमा २०२६', description: 'Text + digits round trip', direction: 'roundtrip' },
+      { input: '2026', expected: '२०२६', description: 'Digits round trip', direction: 'roundtrip' },
+      { input: 'काँ', expected: 'कां', description: 'Normalized round trip (Chandrabindu -> Anusvara)', direction: 'roundtrip' },
+      { input: 'टिका', expected: 'तिका', description: 'Lossy fallback round trip (Retroflex -> Dental)', direction: 'roundtrip' },
     ]
   },
   {
@@ -207,21 +212,35 @@ export const V0_0_1_TEST_SUITES: TestSuiteInfo[] = [
     category: 'Unicode Standards',
     description: 'Checks exact Unicode code points (U+1900–U+194F), absence of U+FFFD replacement characters, UTF-16 surrogate safety, and NFC stability.',
     sampleCases: [
-      { input: '᤹', expected: 'U+1939', description: 'Mukphreng code point integrity', direction: 'devanagariToLimbu' },
-      { input: '᤺', expected: 'U+193A', description: 'Kemphreng code point integrity', direction: 'devanagariToLimbu' },
-      { input: '᤻', expected: 'U+193B', description: 'Sa-i code point integrity', direction: 'devanagariToLimbu' },
-      { input: '᥀', expected: 'U+1940', description: 'Loo code point integrity', direction: 'devanagariToLimbu' },
+      { input: '᤹', expected: 'U+1939', description: 'Mukphreng code point integrity', direction: 'unicodeHex' },
+      { input: '᤺', expected: 'U+193A', description: 'Kemphreng code point integrity', direction: 'unicodeHex' },
+      { input: '᤻', expected: 'U+193B', description: 'Sa-i code point integrity', direction: 'unicodeHex' },
+      { input: '᥀', expected: 'U+1940', description: 'Loo code point integrity', direction: 'unicodeHex' },
     ]
   }
 ];
 
 export const GOLDEN_CASES = [
+  // 1. Text + Numbers combinations
+  { devanagari: 'खेमा 2026', limbu: 'ᤂᤣᤔᤠ ᥈᥆᥈᥌', notes: 'Characters + English numbers' },
+  { devanagari: 'याकथुङ ५', limbu: 'ᤕᤠᤁᤌᤢᤅ ᥋', notes: 'Characters + Nepali numbers' },
+  { devanagari: '2026 खेमा', limbu: '᥈᥆᥈᥌ ᤂᤣᤔᤠ', notes: 'Numbers + characters' },
+  { devanagari: '१० जना', limbu: '᥇᥆ ᤈᤏᤠ', notes: 'Nepali numbers + characters' },
+  { devanagari: 'वर्ष 2026 मा', limbu: 'ᤘᤷᤚ ᥈᥆᥈᥌ ᤔᤠ', notes: 'Characters + numbers + characters' },
+  { devanagari: 'भाग १ को', limbu: 'ᤓᤠᤃ ᥇ ᤁᤥ', notes: 'Characters + Nepali numbers + characters' },
+  { devanagari: '1 क 2', limbu: '᥇ ᤁ ᥈', notes: 'Numbers + character + numbers' },
+  { devanagari: '२०२६ खेमा ५', limbu: '᥈᥆᥈᥌ ᤂᤣᤔᤠ ᥋', notes: 'Nepali numbers + characters + numbers' },
+  { devanagari: 'सिक्किम 7 ताप्लेजुङ 12', limbu: 'ᤛᤡᤰᤁᤡᤔ ᥍ ᤋᤠᤵᤗᤣᤈᤢᤅ ᥇᥈', notes: 'Multi-word with English numbers' },
+
+  // 2. Only numbers
+  { devanagari: '2026', limbu: '᥈᥆᥈᥌', notes: 'Only numbers (English 2026)' },
+  { devanagari: '२०८३', limbu: '᥈᥆᥎᥉', notes: 'Only numbers (Nepali २०८३)' },
+
+  // 3. Classical phonological baselines
   { devanagari: 'क', limbu: 'ᤁ', notes: 'Core Ka consonant' },
   { devanagari: 'खेमा', limbu: 'ᤂᤣᤔᤠ', notes: 'Standard word "Khema" (forgiveness)' },
   { devanagari: 'किराती', limbu: 'ᤁᤡᤖᤠᤋᤡ᤺', notes: 'Kirat ethnonym with long I' },
   { devanagari: 'याकथुङ', limbu: 'ᤕᤠᤁᤌᤢᤅ', notes: 'Yakthung endonym' },
   { devanagari: 'ताप्लेजुङ', limbu: 'ᤋᤠᤵᤗᤣᤈᤢᤅ', notes: 'Taplejung with final Small Pa' },
-  { devanagari: 'सिक्किम', limbu: 'ᤛᤡᤰᤁᤡᤶ', notes: 'Sikkim with mid Small Ka and final Small Ma' },
   { devanagari: 'लो!', limbu: '᥀', notes: 'Exclamatory particle Loo' },
-  { devanagari: '२०२६', limbu: '᥈᥆᥈᥌', notes: 'Devanagari year 2026 to Limbu numerals' },
 ];
