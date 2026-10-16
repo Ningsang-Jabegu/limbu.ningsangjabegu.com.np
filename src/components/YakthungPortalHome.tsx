@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { LATEST_VERSION_ID, VERSIONS_REGISTRY } from '../versions/registry';
 
+import { InteractiveHero } from './InteractiveHero';
+
 interface YakthungPortalHomeProps {
   onNavigate: (path: string) => void;
 }
@@ -25,56 +27,8 @@ export const YakthungPortalHome: React.FC<YakthungPortalHomeProps> = ({ onNaviga
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
       
-      {/* Hero Section */}
-      <section className="space-y-6 pt-4 pb-2 border-b border-slate-200">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-50 border border-teal-200 rounded-full text-xs font-medium text-teal-800">
-          <span className="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
-          <span>Yakthung (Limbu) Language & Computing Portal · limbu.ningsangjabegu.com.np</span>
-        </div>
-
-        <div className="space-y-3">
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 leading-tight">
-            Yakthung Language Technologies <br className="hidden sm:inline" />
-            <span className="text-teal-700 font-sirijanga font-normal text-3xl sm:text-4xl">
-              ᤕᤠᤰᤌᤢᤅ ᤐᤠ᤺ᤴ ᤋᤣ᤺ᤰᤏᤥᤗᤥᤈᤡ
-            </span>
-          </h1>
-          <p className="text-base sm:text-lg text-slate-600 max-w-3xl leading-relaxed">
-            Centralized research hub and digital workspace curated by <strong>Ningsang Jabegu</strong> (ᤏᤡᤅᤚᤠ᤺ᤅ ᤈᤘᤣ᤺ᤃᤢ).
-            Dedicated to open-source computational tools, Sirijanga Unicode standard implementations,
-            phonological documentation, and community language infrastructure.
-          </p>
-        </div>
-
-        {/* Quick Hub Navigation Cards */}
-        <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-medium">
-          <button
-            onClick={() => onNavigate('/yakthung-utils/latest')}
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
-          >
-            <span>Launch Yakthung Utils ({LATEST_VERSION_ID})</span>
-            <ArrowRight className="w-4 h-4 text-teal-400" />
-          </button>
-
-          <button
-            onClick={() => onNavigate('/yakthung-utils/research')}
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <BookOpen className="w-4 h-4 text-slate-500" />
-            <span>Research & Transliteration Notes</span>
-          </button>
-
-          <a
-            href="https://ningsangjabegu.com.np"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2.5 text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-colors"
-          >
-            <span>Author Portfolio (ningsangjabegu.com.np)</span>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-          </a>
-        </div>
-      </section>
+      {/* Interactive Hero Experience */}
+      <InteractiveHero onNavigate={onNavigate} />
 
       {/* Featured Flagship Project: Yakthung Utils */}
       <section className="space-y-6">
