@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { X, CheckCircle, Terminal, Play, ShieldAlert, Check } from 'lucide-react';
-import { VersionMetadata } from '../versions/registry';
-import { V0_0_1_TEST_SUITES } from '../versions/implementations/v0_0_1/testData';
-import { v0_0_1_adapter } from '../versions/implementations/v0_0_1/adapter';
+import { VersionMetadata, getVersionAdapter, getVersionTestData } from '../versions/registry';
 
 interface ValidationPanelProps {
   version: VersionMetadata;
@@ -21,6 +19,9 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
     executionTimeMs: number;
   } | null>(null);
 
+  const adapter = useMemo(() => getVersionAdapter(version.id), [version.id]);
+  const { testSuites } = useMemo(() => getVersionTestData(version.id), [version.id]);
+
   const handleRunVerification = () => {
     setRunningLiveTest(true);
     const startTime = performance.now();
@@ -30,19 +31,19 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
 
     // Run each suite sample case against the loaded adapter
     try {
-      V0_0_1_TEST_SUITES.forEach((suite) => {
+      testSuites.forEach((suite) => {
         suite.sampleCases.forEach((tc) => {
           let actual = '';
           if (tc.direction === 'devanagariToLimbu') {
-            actual = v0_0_1_adapter.devanagariToLimbu(tc.input);
+            actual = adapter.devanagariToLimbu(tc.input);
           } else if (tc.direction === 'limbuToDevanagari') {
-            actual = v0_0_1_adapter.limbuToDevanagari(tc.input);
+            actual = adapter.limbuToDevanagari(tc.input);
           } else if (tc.direction === 'roundtrip') {
-            actual = v0_0_1_adapter.limbuToDevanagari(v0_0_1_adapter.devanagariToLimbu(tc.input));
+            actual = adapter.limbuToDevanagari(adapter.devanagariToLimbu(tc.input));
           } else if (tc.direction === 'digits') {
-            actual = v0_0_1_adapter.convertToLimbuDigits(tc.input);
+            actual = adapter.convertToLimbuDigits(tc.input);
           } else if (tc.direction === 'scriptDetection') {
-            actual = String(v0_0_1_adapter.isLimbuScript(tc.input));
+            actual = String(adapter.isLimbuScript(tc.input));
           } else if (tc.direction === 'unicodeHex') {
             actual = 'U+' + (tc.input.codePointAt(0)?.toString(16).toUpperCase().padStart(4, '0') ?? '');
           }
@@ -82,7 +83,7 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
               <span className="font-mono text-xs text-slate-500 font-normal">({version.id})</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              13 Test Suites · 913 Test Cases · 913 Passed · 0 Failed (100% Pass Rate)
+              {version.testSuitesCount} Test Suites · {version.totalTestCases} Test Cases · {version.passedTestCases} Passed · 0 Failed (100% Pass Rate)
             </p>
           </div>
           <button
@@ -141,11 +142,11 @@ export const ValidationPanel: React.FC<ValidationPanelProps> = ({
           {/* Test Suites Accordion / Grid */}
           <div className="space-y-3">
             <h3 className="font-semibold text-slate-900 uppercase tracking-wider text-[11px]">
-              Catalog of 13 Test Suites
+              Catalog of {version.testSuitesCount} Test Suites ({version.id})
             </h3>
 
             <div className="space-y-2.5">
-              {V0_0_1_TEST_SUITES.map((suite) => (
+              {testSuites.map((suite) => (
                 <div
                   key={suite.id}
                   className="border border-slate-200 rounded-lg p-3 bg-white hover:border-slate-300 transition-colors"

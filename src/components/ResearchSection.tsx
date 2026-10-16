@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   BookOpen, 
   ExternalLink, 
@@ -8,10 +8,10 @@ import {
   CheckCircle2, 
   HelpCircle,
   Binary,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
-import { v0_0_1_adapter } from '../versions/implementations/v0_0_1/adapter';
-import { VersionMetadata } from '../versions/registry';
+import { VersionMetadata, getVersionAdapter } from '../versions/registry';
 
 interface ResearchSectionProps {
   version: VersionMetadata;
@@ -23,9 +23,10 @@ export const ResearchSection: React.FC<ResearchSectionProps> = ({
   onNavigate,
 }) => {
   const [activeTab, setActiveTab] = useState<'paper' | 'matrix'>('paper');
-  const [matrixCategory, setMatrixCategory] = useState<'consonants' | 'vowels' | 'subjoints' | 'small' | 'signs' | 'numerals'>('consonants');
+  const [matrixCategory, setMatrixCategory] = useState<'consonants' | 'vowels' | 'independent_vowels' | 'subjoints' | 'small' | 'signs' | 'numerals'>('consonants');
 
-  const mappings = v0_0_1_adapter.mappings;
+  const adapter = useMemo(() => getVersionAdapter(version.id), [version.id]);
+  const mappings = adapter.mappings;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
@@ -329,6 +330,7 @@ export const ResearchSection: React.FC<ResearchSectionProps> = ({
             {[
               { id: 'consonants', label: 'Core Consonants' },
               { id: 'vowels', label: 'Dependent Vowels' },
+              ...(mappings.independentVowels ? [{ id: 'independent_vowels', label: 'Independent Vowels (अ-औ)' }] : []),
               { id: 'subjoints', label: 'Subjoints (Medials)' },
               { id: 'small', label: 'Small Letters (Finals)' },
               { id: 'signs', label: 'Modifiers & Signs' },
@@ -350,6 +352,32 @@ export const ResearchSection: React.FC<ResearchSectionProps> = ({
 
           {/* Table display */}
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+            {matrixCategory === 'independent_vowels' && mappings.independentVowels && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-700">
+                    <tr>
+                      <th className="p-3 font-semibold">Devanagari Vowel</th>
+                      <th className="p-3 font-semibold">Sirijanga Representation</th>
+                      <th className="p-3 font-semibold font-mono">Unicode Elements</th>
+                      <th className="p-3 font-semibold">Structural Relation</th>
+                      <th className="p-3 font-semibold">Linguistic Hint</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {mappings.independentVowels.map((iv: any, i: number) => (
+                      <tr key={i} className="hover:bg-slate-50/60">
+                        <td className="p-3 font-devanagari text-base font-semibold text-slate-900">{iv.devanagari}</td>
+                        <td className="p-3 font-sirijanga text-xl text-teal-800">{iv.limbu}</td>
+                        <td className="p-3 font-mono text-[11px] text-slate-500">{iv.code}</td>
+                        <td className="p-3 text-slate-700 font-mono text-[11px]">{iv.relation || 'carrier + sign'}</td>
+                        <td className="p-3 text-slate-600">{iv.hint}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {matrixCategory === 'consonants' && (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">

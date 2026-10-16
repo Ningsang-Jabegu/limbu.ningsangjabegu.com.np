@@ -88,7 +88,7 @@ export const YakthungPortalHome: React.FC<YakthungPortalHomeProps> = ({ onNaviga
             </h2>
           </div>
           <span className="text-xs font-mono font-medium px-2.5 py-1 rounded bg-teal-50 text-teal-800 border border-teal-200">
-            Frozen Release v0.0.1
+            Latest Release {latestVer.id} ({latestVer.versionNumber})
           </span>
         </div>
 
@@ -104,20 +104,20 @@ export const YakthungPortalHome: React.FC<YakthungPortalHomeProps> = ({ onNaviga
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
                 <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                  <div className="font-semibold text-slate-900 mb-1">Context-Aware Parsing</div>
-                  Prevents Devanagari virama leakage, correctly mapping medial subjoints (्य, ्र, ्व) and syllable-final small letters (ᤰ–ᤸ).
+                  <div className="font-semibold text-slate-900 mb-1">Independent Vowels & Conjuncts</div>
+                  Maps Devanagari standalone vowels (अ–औ) via vowel carrier ᤀ and recognizes 3-codepoint conjuncts (ज्ञ → ᤝ, त्र → ᤞ).
                 </div>
                 <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                  <div className="font-semibold text-slate-900 mb-1">Vowel Length & Kemphreng</div>
-                  Distinguishes short and long I/U vowels through Limbu vowel signs and Kemphreng (᤺) length modifiers.
+                  <div className="font-semibold text-slate-900 mb-1">Selective Kemphreng (᤺)</div>
+                  Differentiates long vowel lengths (की, कू) with selective Kemphreng while strictly preserving normal Aa (का → ᤁᤠ).
                 </div>
                 <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                  <div className="font-semibold text-slate-900 mb-1">913 Automated Tests</div>
-                  13 test suites with 100% pass rate covering Unicode boundary, numeral localization, and golden regression fixtures.
+                  <div className="font-semibold text-slate-900 mb-1">1,048 Automated Tests</div>
+                  15 test suites with 100% pass rate covering Unicode boundary, bidirectional numerals, and vocabulary regressions.
                 </div>
                 <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg">
                   <div className="font-semibold text-slate-900 mb-1">Immutable Versioning</div>
-                  Permanently preserved research artifacts at versioned endpoints (<span className="font-mono">/v0.0.1</span>).
+                  Permanently preserved research artifacts at versioned endpoints (<span className="font-mono">/v0.0.1</span> and <span className="font-mono">/v0.0.2</span>).
                 </div>
               </div>
             </div>
@@ -126,7 +126,7 @@ export const YakthungPortalHome: React.FC<YakthungPortalHomeProps> = ({ onNaviga
             <div className="bg-slate-900 text-white rounded-xl p-5 flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs text-slate-400">
-                  <span className="font-mono">yakthung-utils@0.0.1</span>
+                  <span className="font-mono">{latestVer.npmPackage}</span>
                   <span className="text-emerald-400 font-mono">MIT</span>
                 </div>
                 <div className="font-mono text-xs text-slate-300 bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1">

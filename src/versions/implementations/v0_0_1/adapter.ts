@@ -37,6 +37,9 @@ export interface ConverterFunctions {
     subjoints: typeof SUBJOINTS;
     signs: typeof SIGNS;
     hints: typeof HINTS_AND_DOCS;
+    independentVowels?: Array<{ devanagari: string; limbu: string; code: string; hint: string; relation?: string }>;
+    limbuToDevanagariNumberMap?: Record<string, string>;
+    devanagariNumberMap?: Record<string, string>;
   };
 }
 

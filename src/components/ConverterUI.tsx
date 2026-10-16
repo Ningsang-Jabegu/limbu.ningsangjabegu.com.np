@@ -15,9 +15,7 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import { VersionMetadata, LATEST_VERSION_ID } from '../versions/registry';
-import { v0_0_1_adapter } from '../versions/implementations/v0_0_1/adapter';
-import { GOLDEN_CASES } from '../versions/implementations/v0_0_1/testData';
+import { VersionMetadata, LATEST_VERSION_ID, getVersionAdapter, getVersionTestData } from '../versions/registry';
 import { ValidationPanel } from './ValidationPanel';
 
 interface ConverterUIProps {
@@ -42,9 +40,9 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
   const [showValidationModal, setShowValidationModal] = useState<boolean>(false);
   const liveConversionId = useId();
 
-  // Pick converter implementation for this version
-  // For v0.0.1, we strictly use v0_0_1_adapter
-  const adapter = v0_0_1_adapter;
+  // Dynamically resolve the authentic isolated adapter and test fixtures for this specific version
+  const adapter = useMemo(() => getVersionAdapter(version.id), [version.id]);
+  const { goldenCases } = useMemo(() => getVersionTestData(version.id), [version.id]);
 
   // Execute conversion
   const handleConvert = (textToConvert: string = inputText) => {
@@ -399,7 +397,7 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5">
-          {GOLDEN_CASES.map((sample, idx) => (
+          {goldenCases.map((sample, idx) => (
             <button
               key={idx}
               type="button"
@@ -528,7 +526,7 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
               onClick={() => setShowValidationModal(true)}
               className="text-xs text-teal-700 hover:text-teal-900 font-medium underline cursor-pointer"
             >
-              View all 13 suites
+              View all {version.testSuitesCount} suites
             </button>
           </div>
 
@@ -549,8 +547,8 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
           </div>
 
           <p className="text-xs text-slate-600 leading-relaxed">
-            The frozen test suite covers 13 distinct functional domains including Unicode block isolation,
-            Sa-i combining marks, Kemphreng vowel lengthening, nasalization normalization, retroflex fallbacks,
+            The frozen test suite covers {version.testSuitesCount} distinct functional domains including Unicode block isolation,
+            independent vowels, Sa-i combining marks, Kemphreng vowel lengthening, nasalization normalization, retroflex fallbacks,
             and multi-tier round-trip stability.
           </p>
 
@@ -559,7 +557,7 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
             className="w-full py-2 px-3 bg-teal-800 hover:bg-teal-900 text-white rounded-md text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
           >
             <Check className="w-3.5 h-3.5 text-teal-300" />
-            <span>Inspect 13 Test Suites & Run Browser Verification</span>
+            <span>Inspect {version.testSuitesCount} Test Suites & Run Browser Verification</span>
           </button>
         </div>
       </div>
@@ -579,6 +577,45 @@ export const ConverterUI: React.FC<ConverterUIProps> = ({
             Frozen Artifact
           </span>
         </div>
+
+        {/* Highlighted Added & Fixed sections if available */}
+        {(version.fixed || version.added) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-teal-50/40 rounded-xl border border-teal-100">
+            {version.fixed && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-teal-900 flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-teal-700" />
+                  Targeted Fixes in {version.id}
+                </h3>
+                <ul className="space-y-1.5 text-xs text-teal-950">
+                  {version.fixed.map((fix, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="text-teal-600 font-bold shrink-0">✓</span>
+                      <span>{fix}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {version.added && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-teal-900 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-700" />
+                  New Capabilities in {version.id}
+                </h3>
+                <ul className="space-y-1.5 text-xs text-teal-950">
+                  {version.added.map((add, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <span className="text-teal-600 font-bold shrink-0">+</span>
+                      <span>{add}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">

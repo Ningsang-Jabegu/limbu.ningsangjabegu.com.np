@@ -6,9 +6,14 @@
  * New releases are registered here with their isolated implementation adapter.
  */
 
+import { ConverterFunctions, v0_0_1_adapter } from './implementations/v0_0_1/adapter';
+import { v0_0_2_adapter } from './implementations/v0_0_2/adapter';
+import { TestSuiteInfo, V0_0_1_TEST_SUITES, GOLDEN_CASES } from './implementations/v0_0_1/testData';
+import { V0_0_2_TEST_SUITES, GOLDEN_CASES_V0_0_2 } from './implementations/v0_0_2/testData';
+
 export interface VersionMetadata {
-  id: string; // e.g. "v0.0.1"
-  versionNumber: string; // e.g. "0.0.1"
+  id: string; // e.g. "v0.0.1", "v0.0.2"
+  versionNumber: string; // e.g. "0.0.1", "0.0.2"
   status: 'experimental' | 'stable' | 'deprecated';
   releaseDate: string;
   gitTag: string;
@@ -33,6 +38,60 @@ export interface VersionMetadata {
 }
 
 export const VERSIONS_REGISTRY: Record<string, VersionMetadata> = {
+  'v0.0.2': {
+    id: 'v0.0.2',
+    versionNumber: '0.0.2',
+    status: 'experimental',
+    releaseDate: 'October 14, 2026',
+    gitTag: 'v0.0.2',
+    gitCommit: 'f456d13',
+    gitCommitUrl: 'https://github.com/Ningsang-Jabegu/yakthung-utils/commit/f456d1309548db0ef0a7c73ccde742e2014eb22f',
+    gitTagUrl: 'https://github.com/Ningsang-Jabegu/yakthung-utils/releases/tag/v0.0.2',
+    npmPackage: 'yakthung-utils@0.0.2',
+    npmUrl: 'https://www.npmjs.com/package/yakthung-utils/v/0.0.2',
+    testSuitesCount: 15,
+    totalTestCases: 1048,
+    passedTestCases: 1048,
+    failedTestCases: 0,
+    isLatest: true,
+    previousVersion: 'v0.0.1',
+    nextVersion: null,
+    summary: 'Targeted fixes for independent vowels (आ-औ), selective Kemphreng vowel length, special conjuncts (ज्ञ, त्र), and native bidirectional numeral transliteration.',
+    added: [
+      'Comprehensive conversion mappings and test suites for Devanagari independent vowels from आ through औ (Suite 14)',
+      'Selective handling of Kemphreng (᤺) so that vowel length is not added indiscriminately to every long vowel (e.g. का → ᤁᤠ without Kemphreng)',
+      'Explicit 3-codepoint conjunct parsing for ज्ञ (ᤝ) and त्र (ᤞ) evaluated prior to generic consonant-plus-halanta logic',
+      'Native reverse mapping from Limbu numerals ᥆–᥏ to Devanagari digits ०–९',
+      'Expanded real-world vocabulary, geographic, and ethnonym regression suites (Suite 15)'
+    ],
+    fixed: [
+      'Resolved vowel length collapse where कि and की, or कु and कू, could become indistinguishable',
+      'Fixed over-application of Kemphreng where का was incorrectly output as ᤁᤠ᤺ instead of ᤁᤠ',
+      'Fixed conjunct parsing for ज्ञ and त्र ensuring all three constituent Devanagari codepoints are correctly consumed',
+      'Fixed reverse digit transliteration: Limbu numerals now convert cleanly back into Devanagari numerals in reverse mode'
+    ],
+    implemented: [
+      'Independent Vowels: standalone Devanagari vowels (अ, आ, इ, ई, उ, ऊ, ए, ऐ, ओ, औ) mapped using vowel carrier ᤀ and signs',
+      'Selective Kemphreng: applied to long I (की → ᤁᤡ᤺) and long U (कू → ᤁᤢ᤺) while preserving normal Aa (का → ᤁᤠ)',
+      'Special Conjuncts: direct mapping for ज्ञ (ᤝ, U+191D) and त्र (ᤞ, U+191E)',
+      'Bidirectional Numerals: automatic transliteration for Arabic (0-9), Devanagari (०-९), and Limbu (᥆-᥏) digits',
+      'Core Consonants with dental/retroflex fallback mappings',
+      'Medial Subjoined forms (्य, ्र, ्व)',
+      'Small/final letters (U+1930 to U+1938)',
+      'Mukphreng (᤹) glottal modifier handling',
+      'Nasalization (Anusvara ं and Chandrabindu ँ normalization to ᤱ)',
+      'Punctuation & preserved Devanagari danda (।, ॥)',
+      'Special Limbu sign Loo (᥀) contextual handling',
+      'Devanagari halanta leakage prevention via Sa-i (᤻)',
+      'Unicode integrity & code-point stability tests (15 suites, 1,048 cases)'
+    ],
+    knownLimitations: [
+      'Some Devanagari characters lack direct one-to-one equivalents and use linguistic fallbacks (e.g., retroflex ट maps to dental त in reverse).',
+      'Nasalization is normalized: both anusvara (ं) and chandrabindu (ँ) map to ᤱ, recovering as anusvara in reverse.',
+      'Passing computational tests demonstrates conformance to the test suite; it does not by itself guarantee linguistic validity across every Yakthung dialect.',
+      'Community and native-speaker validation remains vital for ongoing orthographic refinements.'
+    ]
+  },
   'v0.0.1': {
     id: 'v0.0.1',
     versionNumber: '0.0.1',
@@ -48,9 +107,9 @@ export const VERSIONS_REGISTRY: Record<string, VersionMetadata> = {
     totalTestCases: 913,
     passedTestCases: 913,
     failedTestCases: 0,
-    isLatest: true,
+    isLatest: false,
     previousVersion: null,
-    nextVersion: null,
+    nextVersion: 'v0.0.2',
     summary: 'Initial frozen experimental npm release implementing foundational Devanagari ↔ Sirijanga conversion rules with strict Unicode-safe handling.',
     implemented: [
       'Devanagari → Sirijanga conversion',
@@ -81,7 +140,7 @@ export const VERSIONS_REGISTRY: Record<string, VersionMetadata> = {
   }
 };
 
-export const LATEST_VERSION_ID = 'v0.0.1';
+export const LATEST_VERSION_ID = 'v0.0.2';
 
 export function getVersion(versionId: string): VersionMetadata | null {
   const normalized = versionId.toLowerCase().trim();
@@ -93,4 +152,32 @@ export function getVersion(versionId: string): VersionMetadata | null {
 
 export function getAllVersions(): VersionMetadata[] {
   return Object.values(VERSIONS_REGISTRY);
+}
+
+export function getVersionAdapter(versionId: string): ConverterFunctions {
+  const normalized = versionId.toLowerCase().trim();
+  if (normalized === 'v0.0.1') {
+    return v0_0_1_adapter;
+  }
+  // Default to v0.0.2 for latest or unknown future versions
+  return v0_0_2_adapter;
+}
+
+export interface VersionTestDataResult {
+  testSuites: TestSuiteInfo[];
+  goldenCases: Array<{ devanagari: string; limbu: string; notes: string }>;
+}
+
+export function getVersionTestData(versionId: string): VersionTestDataResult {
+  const normalized = versionId.toLowerCase().trim();
+  if (normalized === 'v0.0.1') {
+    return {
+      testSuites: V0_0_1_TEST_SUITES,
+      goldenCases: GOLDEN_CASES,
+    };
+  }
+  return {
+    testSuites: V0_0_2_TEST_SUITES,
+    goldenCases: GOLDEN_CASES_V0_0_2,
+  };
 }
